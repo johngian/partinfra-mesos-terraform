@@ -81,6 +81,8 @@ resource "aws_security_group" "mesos-openvpn-sg" {
 # EC2 instances
 ## OpenVPN node
 resource "aws_instance" "mesos-openvpn" {
+  depends_on = ["aws_internet_gateway.mesos-gw"]
+
   ami = "${var.openvpn_ami}"
   instance_type = "${var.openvpn_instance_type}"
   key_name = "${var.key_name}"
@@ -101,6 +103,8 @@ resource "aws_instance" "mesos-openvpn" {
 
 ## Mesos master nodes
 resource "aws_instance" "mesos-master" {
+  depends_on = ["aws_internet_gateway.mesos-gw"]
+
   count = 3
   ami = "${var.mesos_master_ami}"
   instance_type = "${var.mesos_master_instance_type}"
@@ -122,6 +126,8 @@ resource "aws_instance" "mesos-master" {
 
 ## Mesos slave nodes
 resource "aws_instance" "mesos-slave" {
+  depends_on = ["aws_internet_gateway.mesos-gw"]
+
   count = 3
   ami = "${var.mesos_slave_ami}"
   instance_type = "${var.mesos_slave_instance_type}"

@@ -78,6 +78,21 @@ resource "aws_security_group" "mesos-openvpn-sg" {
   vpc_id = "${aws_vpc.mesos.id}"
 }
 
+# Allow SSH access
+resource "aws_security_group" "mesos-ssh-sg" {
+  name = "mesos-ssh-sg"
+  description = "Allow OpenVPN traffic"
+
+  ingress {
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  vpc_id = "${aws_vpc.mesos.id}"
+}
+
 # EC2 instances
 ## OpenVPN node
 resource "aws_instance" "mesos-openvpn" {
@@ -88,6 +103,7 @@ resource "aws_instance" "mesos-openvpn" {
   key_name = "${var.key_name}"
 
   vpc_security_group_ids = [
+    "${aws_security_group.mesos-ssh-sg.id}",
     "${aws_security_group.mesos-default-sg.id}",
     "${aws_security_group.mesos-openvpn-sg.id}"
   ]

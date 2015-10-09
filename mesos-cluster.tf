@@ -99,7 +99,6 @@ resource "aws_instance" "mesos-openvpn" {
   ]
 
   subnet_id = "${aws_subnet.mesos-public-subnet.id}"
-  vpc_id = "${aws_vpc.mesos.id}"
 
   tags = {
     Name = "mesos-openvpn"
@@ -120,7 +119,6 @@ resource "aws_instance" "mesos-master" {
     "${aws_security_group.mesos-default-sg-udp.id}"
   ]
 
-  vpc_id = "${aws_vpc.mesos.id}"
   subnet_id = "${aws_subnet.mesos-public-subnet.id}"
   private_ip = "${lookup(var.master_node_ips, count.index)}"
 
@@ -143,7 +141,6 @@ resource "aws_instance" "mesos-slave" {
     "${aws_security_group.mesos-default-sg-udp.id}"
   ]
 
-  vpc_id = "${aws_vpc.mesos.id}"
   subnet_id = "${aws_subnet.mesos-public-subnet.id}"
   private_ip = "${lookup(var.slave_node_ips, count.index)}"
 

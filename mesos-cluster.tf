@@ -40,9 +40,9 @@ resource "aws_route_table_association" "mesos-route-table" {
   route_table_id = "${aws_route_table.mesos-route-table.id}"
 }
 
-# Allow internal VPC traffic (tcp)
-resource "aws_security_group" "mesos-default-sg-tcp" {
-  name = "mesos-default-sg-tcp"
+# Allow all internal VPC traffic
+resource "aws_security_group" "mesos-default-sg" {
+  name = "mesos-default-sg"
   description = "Allow traffic from mesos-public-subnet."
 
   ingress {
@@ -52,20 +52,13 @@ resource "aws_security_group" "mesos-default-sg-tcp" {
     cidr_blocks = ["${aws_subnet.mesos-public-subnet.cidr_block}"]
   }
 
-  vpc_id = "${aws_vpc.mesos.id}"
-}
-
-# Allow internal VPC traffic (udp)
-resource "aws_security_group" "mesos-default-sg-udp" {
-  name = "mesos-default-sg-udp"
-  description = "Allow traffic from mesos-public-subnet."
-
   ingress {
     from_port = 0
     to_port = 65535
     protocol = "udp"
     cidr_blocks = ["${aws_subnet.mesos-public-subnet.cidr_block}"]
   }
+
 
   vpc_id = "${aws_vpc.mesos.id}"
 }
@@ -93,8 +86,7 @@ resource "aws_instance" "mesos-openvpn" {
   key_name = "${var.key_name}"
 
   vpc_security_group_ids = [
-    "${aws_security_group.mesos-default-sg-tcp.id}",
-    "${aws_security_group.mesos-default-sg-udp.id}",
+    "${aws_security_group.mesos-default-sg.id}",
     "${aws_security_group.mesos-openvpn-sg.id}"
   ]
 
@@ -115,8 +107,7 @@ resource "aws_instance" "mesos-master" {
   key_name = "${var.key_name}"
 
   vpc_security_group_ids = [
-    "${aws_security_group.mesos-default-sg-tcp.id}",
-    "${aws_security_group.mesos-default-sg-udp.id}"
+    "${aws_security_group.mesos-default-sg.id}"
   ]
 
   subnet_id = "${aws_subnet.mesos-public-subnet.id}"
@@ -137,8 +128,7 @@ resource "aws_instance" "mesos-slave" {
   key_name = "${var.key_name}"
 
   vpc_security_group_ids = [
-    "${aws_security_group.mesos-default-sg-tcp.id}",
-    "${aws_security_group.mesos-default-sg-udp.id}"
+    "${aws_security_group.mesos-default-sg.id}"
   ]
 
   subnet_id = "${aws_subnet.mesos-public-subnet.id}"

@@ -178,6 +178,6 @@ resource "aws_instance" "mesos-slave" {
 
 # Assign elastic IP to openvpn node
 resource "aws_eip" "openpvn-eip" {
-    instance = "${aws_instance.mesos-openvpn.id}"
-    vpc = true
+  instance = "${aws_instance.mesos-openvpn.id}"
+  vpc = true
 }

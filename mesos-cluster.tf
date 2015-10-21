@@ -7,6 +7,7 @@ provider "aws" {
 # Setup dedicated VPC for mesos cluster
 resource "aws_vpc" "mesos" {
   cidr_block = "${var.vpc_cidr_block}"
+  enable_dns_hostnames = true
   tags = {
     Name = "mesos"
     Cluster = "mesos-cluster"
@@ -16,12 +17,21 @@ resource "aws_vpc" "mesos" {
 # Create internet gateway for mesos cluster
 resource "aws_internet_gateway" "mesos-gw" {
   vpc_id = "${aws_vpc.mesos.id}"
+  tags = {
+    Name = "mesos-igw"
+    Cluster = "mesos-cluster"
+  }
 }
 
 # Define public subnet for mesos cluster
 resource "aws_subnet" "mesos-public-subnet" {
   vpc_id = "${aws_vpc.mesos.id}"
   cidr_block = "${var.mesos_subnet_cidr_block}"
+  map_public_ip_on_launch = true
+  tags = {
+    Name = "mesos-public-subnet"
+    Cluster = "mesos-cluster"
+  }
 }
 
 # Define routing table for mesos cluster
@@ -31,6 +41,11 @@ resource "aws_route_table" "mesos-route-table" {
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = "${aws_internet_gateway.mesos-gw.id}"
+  }
+
+  tags = {
+    Name = "mesos-public-route-table"
+    Cluster = "mesos-cluster"
   }
 }
 

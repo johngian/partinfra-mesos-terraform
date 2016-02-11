@@ -163,8 +163,10 @@ resource "aws_instance" "mesos-master" {
 
   tags = {
     Name = "${format("mesos-master%d", count.index)}"
-    Cluster = "Mesos"
+    Cluster = "MesosProd"
     Role = "MesosMaster"
+    env = "prod"
+    app = "mesosmaster"
   }
 }
 
@@ -186,8 +188,10 @@ resource "aws_instance" "mesos-slave" {
 
   tags = {
     Name = "${format("mesos-slave%d", count.index)}"
-    Cluster = "Mesos"
+    Cluster = "MesosProd"
     Role = "MesosSlave"
+    env = "prod"
+    app = "mesosslave"
   }
 }
 
